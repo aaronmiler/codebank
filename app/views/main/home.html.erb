@@ -1,0 +1,20 @@
+<% if @created %>
+<div class="row-fluid">
+  <div class="col-md-4">
+    <h1>Span 4</h1>
+  </div>
+  <div class="col-md-8">
+    <h1>Span 8</h1>
+  </div>
+</div>
+<% else %>
+<div class="jumbotron">
+      <div class="container">
+        <h2>Welcome to the Tome of Knowledge</h2>
+        <p>It looks like you don't have a repository set up for the Tome of Knowledge yet.</p>
+        <h3>Let me help you:</h3>
+        <%= link_to 'Create One <i class="glyphicon glyphicon-chevron-right"></i>'.html_safe, {:controller => 'main', :action => 'create_repo'}, {:method => :post, :class => "btn btn-lg btn-primary" } %>
+
+      </div>
+    </div>
+<% end %>
