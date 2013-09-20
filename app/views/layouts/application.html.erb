@@ -12,8 +12,9 @@
       <div class="navbar-header">
         <a class="navbar-brand" href="#">Tome of Knowledge</a>
       </div>
-      
+      <% if session[:credentials] %>
       <p class="pull-right navbar-text">Logged in as <strong><%= session[:credentials]['login'] %></strong></p>
+        <% end %>
     </div>
   </div>
 

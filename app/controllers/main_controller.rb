@@ -1,6 +1,7 @@
 class MainController < ApplicationController
   require 'rest_client'
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
+  before_filter :setup_github
 
   def index
   end
@@ -13,15 +14,18 @@ class MainController < ApplicationController
   end
 
   def login    
-    github  = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
-    address = github.authorize_url redirect_uri: 'http://localhost:3000/callback', scope: 'repo'
+    address = @github.authorize_url redirect_uri: 'http://localhost:3000/callback', scope: 'repo'
     redirect_to address
   end
 
   def home
-    @repos = Github.repos.list user: session[:credentials]['login']
+    @knowledge = Github::Repos.new
+    @knowledge.oauth_token = session[:token]
+    @knowledge.user = session[:credentials]['login']
+    @knowledge.contents :repo => "tome-of-knowledge"
+    @has_repo = @github.repos.list user: session[:credentials]['login']
     @created = false
-    @repos.each do |r|
+    @has_repo.each do |r|
       @created = true if r.name == "tome-of-knowledge"
     end
 
@@ -46,5 +50,8 @@ class MainController < ApplicationController
 
   def check_login
     redirect_to :action => :index if session[:credentials].blank?
+  end
+  def setup_github
+    @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
   end
 end
