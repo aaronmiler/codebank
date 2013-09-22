@@ -65,3 +65,4 @@ gem "figaro"
 gem "github_api"
 gem "rest-client"
 gem 'activerecord-session_store'
+gem "redcarpet"

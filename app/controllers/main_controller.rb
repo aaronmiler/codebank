@@ -1,7 +1,8 @@
 class MainController < ApplicationController
   require 'rest_client'
+  require 'base64'
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
-  before_filter :setup_github
+  before_filter :setup
 
   def index
   end
@@ -14,20 +15,22 @@ class MainController < ApplicationController
   end
 
   def login    
-    address = @github.authorize_url redirect_uri: 'http://localhost:3000/callback', scope: 'repo'
+    address = @github.authorize_url redirect_uri: 'http://localhost:3000/callback', scope: 'public_repo'
     redirect_to address
   end
 
   def home
-    @knowledge = Github::Repos.new
-    @knowledge.oauth_token = session[:token]
-    @knowledge.user = session[:credentials]['login']
-    @knowledge.contents :repo => "tome-of-knowledge"
-    @has_repo = @github.repos.list user: session[:credentials]['login']
-    @created = false
-    @has_repo.each do |r|
-      @created = true if r.name == "tome-of-knowledge"
+    info = Github::Repos.new :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
+    if session[:repo] != info.commits.all.first.first.last
+      session[:latest_sha] = info.commits.all.first.first.last
     end
+    unless session[:has_repo] == true
+      puts "RAN has_repo ==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=="
+      @has_repo = @github.repos.list user: session[:credentials]['login']
+      @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
+    end
+    @files = []
+
 
     #github = Github.new :oauth_token => session[:token]
     #github.login
@@ -40,10 +43,78 @@ class MainController < ApplicationController
     repos.create :name => "tome-of-knowledge"
     redirect_to :action => :home
   end
+  def new_knowledge
 
+  end
+  def save_knowledge
+    @contents = "# #{params[:title]} \n\n#{params[:description]} \n\n ``` \n#{params[:contents]}\n ``` \n\n#### Tags \n #{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.join(' ')}"
+    if params[:topic]
+      @file_name = "#{params[:topic]}/#{params[:title].gsub(' ','-')}.md"
+      @mode = "100644"
+    else
+      @file_name = "#{params[:title].gsub(' ','-')}.md"
+      @mode = "100644"
+    end
+    #git_data = Github::GitData.new
+
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+     :oauth_token => session[:token],
+     :repo => 'tome-of-knowledge'
+    begin
+      file = repo.find :path => @file_name
+      repo.update session[:credentials]['login'], 'tome-of-knowledge', @file_name,
+        :path => @file_name,
+        :message => "Updated Knowledge: #{@file_name}",
+        :content => @contents,
+        :sha => file.sha
+    rescue Github::Error::GithubError => e
+      if e.http_status_code == 404
+        repo.create session[:credentials]['login'], 'tome-of-knowledge', @file_name,
+         :path => "hello.md",
+         :message => "Added Knowledge: #{@file_name}",
+         :content => Base64.encode64(@contents)
+      end
+    end
+
+    @display = repo.find :path => @file_name
+    # blob = git_data.blobs.create session[:credentials]['login'], 'tome-of-knowledge',
+    #   :content => @contents,
+    #   :encoding => "utf-8"
+    # tree = git_data.trees.create session[:credentials]['login'], 'tome-of-knowledge', 
+    # 'tree' => [
+    #   {
+    #     :path => @file_name,
+    #     :mode => "100644",
+    #     :type => 'blob',
+    #     :sha => blob.sha   # reference to the blob object
+    #   }
+    # ]
+    # commit = git_data.commits.create session[:credentials]['login'], 'tome-of-knowledge',
+    #   :message => "Message?",
+    #   :tree => tree.sha,
+    #   :parents => []
+
+  end
   def logout
     reset_session
     redirect_to :action => :index
+  end
+
+  def view
+    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+     :oauth_token => session[:token],
+     :repo => 'tome-of-knowledge'
+    @file = repo.find :path => @file_name
+  end
+
+  def edit
+    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+     :oauth_token => session[:token],
+     :repo => 'tome-of-knowledge'
+    @file = repo.find :path => @file_name
+    @contents = Base64.decode64(@file.content).split(/`+/)
   end
 
   private
@@ -51,7 +122,9 @@ class MainController < ApplicationController
   def check_login
     redirect_to :action => :index if session[:credentials].blank?
   end
-  def setup_github
+  def setup
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
+    @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++"].sort
+    @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, :autolink => true, :space_after_headers => true)
   end
 end

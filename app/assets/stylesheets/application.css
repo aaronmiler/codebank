@@ -17,3 +17,6 @@
 body {
   padding-top:70px;
 }
+.dropdown-toggle {
+  width:100% !important;
+}

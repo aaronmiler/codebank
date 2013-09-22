@@ -7,10 +7,15 @@ Knowledge::Application.routes.draw do
       get :home
       post :create_repo
       get :logout
+      get :new_knowledge
+      get :view
+      post :save_knowledge
     end
   end 
 
   root :to => "main#index"
+  get "/view/:topic/:file" => "main#view"
+  get "/edit/:topic/:file" => "main#edit"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

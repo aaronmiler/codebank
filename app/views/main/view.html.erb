@@ -1,0 +1,3 @@
+<%= @markdown.render(Base64.decode64(@file.content)).html_safe %>
+
+<%= link_to "Edit this Tidbit", "/edit/#{@file_name}" %>

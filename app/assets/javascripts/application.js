@@ -13,4 +13,13 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require touch.punch
 //= require bootstrap.min
+//= require bootstrap-select
+//= require bootstrap-switch
+//= require flatui-checkbox
+//= require flatui-radio
+//= require jquery.tagsinput
+//= require jquery.placeholder
+//= require jquery.stacktable
+//= require flat-application
