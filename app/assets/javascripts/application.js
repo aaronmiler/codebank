@@ -23,3 +23,4 @@
 //= require jquery.placeholder
 //= require jquery.stacktable
 //= require flat-application
+//= require run_prettify

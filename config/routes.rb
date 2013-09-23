@@ -10,10 +10,12 @@ Knowledge::Application.routes.draw do
       get :new_knowledge
       get :view
       post :save_knowledge
+      get :topic
     end
   end 
 
   root :to => "main#index"
+  get "/topic/:topic" => "main#topic"
   get "/view/:topic/:file" => "main#view"
   get "/edit/:topic/:file" => "main#edit"
   # The priority is based upon order of creation: first created -> highest priority.

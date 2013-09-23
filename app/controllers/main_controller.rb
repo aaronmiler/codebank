@@ -1,6 +1,8 @@
 class MainController < ApplicationController
   require 'rest_client'
   require 'base64'
+  require 'utilities'
+
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
   before_filter :setup
 
@@ -29,6 +31,7 @@ class MainController < ApplicationController
       @has_repo = @github.repos.list user: session[:credentials]['login']
       @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
     end
+    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', session[:latest_sha]
     @files = []
 
 
@@ -47,7 +50,7 @@ class MainController < ApplicationController
 
   end
   def save_knowledge
-    @contents = "# #{params[:title]} \n\n#{params[:description]} \n\n ``` \n#{params[:contents]}\n ``` \n\n#### Tags \n #{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.join(' ')}"
+    @contents = "# #{params[:title]}\n\n#{params[:description]}\n\n```\n#{params[:contents]}\n``` \n\n#### Tags\n#{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.join(' ')}\n"
     if params[:topic]
       @file_name = "#{params[:topic]}/#{params[:title].gsub(' ','-')}.md"
       @mode = "100644"
@@ -72,27 +75,11 @@ class MainController < ApplicationController
         repo.create session[:credentials]['login'], 'tome-of-knowledge', @file_name,
          :path => "hello.md",
          :message => "Added Knowledge: #{@file_name}",
-         :content => Base64.encode64(@contents)
+         :content => @contents
       end
     end
 
     @display = repo.find :path => @file_name
-    # blob = git_data.blobs.create session[:credentials]['login'], 'tome-of-knowledge',
-    #   :content => @contents,
-    #   :encoding => "utf-8"
-    # tree = git_data.trees.create session[:credentials]['login'], 'tome-of-knowledge', 
-    # 'tree' => [
-    #   {
-    #     :path => @file_name,
-    #     :mode => "100644",
-    #     :type => 'blob',
-    #     :sha => blob.sha   # reference to the blob object
-    #   }
-    # ]
-    # commit = git_data.commits.create session[:credentials]['login'], 'tome-of-knowledge',
-    #   :message => "Message?",
-    #   :tree => tree.sha,
-    #   :parents => []
 
   end
   def logout
@@ -114,7 +101,14 @@ class MainController < ApplicationController
      :oauth_token => session[:token],
      :repo => 'tome-of-knowledge'
     @file = repo.find :path => @file_name
-    @contents = Base64.decode64(@file.content).split(/`+/)
+    @contents = Base64.decode64(@file.content)
+  end
+  def topic
+    @topic = params[:topic]
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+         :oauth_token => session[:token],
+         :repo => 'tome-of-knowledge'
+        @contents = repo.find :path => params[:topic]
   end
 
   private

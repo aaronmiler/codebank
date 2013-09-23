@@ -1,1 +1,7 @@
-<%= @markdown.render(Base64.decode64(@display.content)).html_safe %>
+<h1><%= @contents.string_between_markers("#", "\n") %></h1>
+<h4>Description</h4>
+<p><%= @contents.string_between_markers("\n", "```") %></p>
+<h4>Code</h4>
+<code class="prettyprint <%= params[:topic] %>"><%= @contents.string_between_markers("```\n", "```") %></code>
+<h4>Tags</h4>
+  <p><%= @contents.string_between_markers("Tags\n", "\n").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ') %></p>

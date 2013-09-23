@@ -20,3 +20,16 @@ body {
 .dropdown-toggle {
   width:100% !important;
 }
+.description {
+  height:100px !important;
+}
+.contents {
+  height:200px !important;
+}
+i {
+  margin-right:5px;
+}
+code {
+  display:block;
+  white-space: pre;
+}

@@ -1,0 +1,5 @@
+<h2>Topic: <%= params[:topic] %></h2>
+<% @contents.each do |file| %>
+  <%= file.name.gsub('-',' ').gsub('.md',' ') %>
+  <%= link_to "View", "/view/#{params[:topic]}/#{file.name.gsub('.md','')}" %>
+<% end %>
