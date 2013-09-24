@@ -1,0 +1,12 @@
+<div class="row-fluid">
+  <div class="col-md-12">
+    <h3>Search</h3>
+      <p>Want to search your knowledge? Simply put your query here to search existing knowledge.<br/>To add tag search to a query input tags like so: tag(my tag)</p>
+    <%= form_tag ({:controller => "main", :action => "results", :method => :post}) do %>
+      <div class="form-group">
+        <%= text_field_tag "query", "", :class => "form-control", :placeholder => "Search knowledge" %>
+        <span class="input-icon fui-search"></span>
+      </div>
+    <% end %>
+  </div>
+</div>

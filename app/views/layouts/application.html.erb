@@ -11,6 +11,9 @@
     <div class="container">
       <div class="navbar-header">
         <a class="navbar-brand" href="/home">Tome of Knowledge</a>
+        <ul class="nav navbar-nav">
+          <li><a href="/search">Search</a></li>
+        </ul>
       </div>
       <% if session[:credentials] %>
       <p class="pull-right navbar-text">Logged in as <strong><%= session[:credentials]['login'] %></strong></p>

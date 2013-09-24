@@ -11,6 +11,8 @@ Knowledge::Application.routes.draw do
       get :view
       post :save_knowledge
       get :topic
+      get :search
+      post :results
     end
   end 
 

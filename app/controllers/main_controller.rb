@@ -10,8 +10,9 @@ class MainController < ApplicationController
   end
 
   def callback
-    response = RestClient.get "http://localhost:9999/authenticate/#{params['code']}"
-    session[:token] = JSON.parse(response)['token']
+
+    access_token = @github.get_token params['code']
+    session[:token] = access_token.token
     session[:credentials] = JSON.parse(RestClient.get "https://api.github.com/user?access_token=#{session[:token]}")
     redirect_to :action => :home
   end
@@ -111,6 +112,16 @@ class MainController < ApplicationController
         @contents = repo.find :path => params[:topic]
   end
 
+  def search
+
+  end
+  def results
+    @search = Github::Search.new  :user => session[:credentials]['login'],
+     :oauth_token => session[:token],
+     :repo => 'tome-of-knowledge'
+    puts @search.code
+  end
+
   private
 
   def check_login
@@ -118,7 +129,6 @@ class MainController < ApplicationController
   end
   def setup
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
-    @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++"].sort
-    @markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML, :autolink => true, :space_after_headers => true)
+    @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++","PostgreSQL","SQL","Other"].sort
   end
 end
