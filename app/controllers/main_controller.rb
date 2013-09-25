@@ -10,7 +10,6 @@ class MainController < ApplicationController
   end
 
   def callback
-
     access_token = @github.get_token params['code']
     session[:token] = access_token.token
     session[:credentials] = JSON.parse(RestClient.get "https://api.github.com/user?access_token=#{session[:token]}")
@@ -28,13 +27,11 @@ class MainController < ApplicationController
       session[:latest_sha] = info.commits.all.first.first.last
     end
     unless session[:has_repo] == true
-      puts "RAN has_repo ==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=="
       @has_repo = @github.repos.list user: session[:credentials]['login']
       @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
     end
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', session[:latest_sha]
     @files = []
-
 
     #github = Github.new :oauth_token => session[:token]
     #github.login
@@ -94,6 +91,7 @@ class MainController < ApplicationController
      :oauth_token => session[:token],
      :repo => 'tome-of-knowledge'
     @file = repo.find :path => @file_name
+    @contents = Base64.decode64(@file.content)
   end
 
   def edit
@@ -116,10 +114,16 @@ class MainController < ApplicationController
 
   end
   def results
-    @search = Github::Search.new  :user => session[:credentials]['login'],
-     :oauth_token => session[:token],
-     :repo => 'tome-of-knowledge'
-    puts @search.code
+    tags = params['query'].scan(/\((\w+)\)/)
+    tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}"}
+    tags = tags.join(' ')
+    puts tags
+    query = params['query'].gsub(/tag\((\w+)\)\s*/,'')
+    @query = "#{tags} #{query} repo:#{session[:credentials]['login']} in:path,file"
+    
+    client = Octokit::Client.new :access_token => session[:token]
+    @results =  client.search_code('repo:aaronmiler/tome-of-knowledge csv')
+    
   end
 
   private

@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require touch.punch
 //= require bootstrap.min
 //= require bootstrap-select

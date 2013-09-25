@@ -22,7 +22,7 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'jquery-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
+# gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
@@ -44,24 +44,25 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem "pry-rails"
-gem "puma"
+gem 'pry-rails'
+gem 'puma'
 group :assets do
-  gem "bootstrap-sass", "~> 2.3.2.1"
+  gem 'bootstrap-sass', '~> 2.3.2.1'
 end
 
 group :development do
-  gem "awesome_print"
+  gem 'awesome_print'
 end
 
 group :test do
-  gem "rspec-rails"
-  gem "factory_girl_rails"
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
 end
 
-gem "rvm-capistrano"
+gem 'rvm-capistrano'
 
-gem "figaro"
-gem "github_api"
-gem "rest-client"
+gem 'figaro'
+gem 'github_api', :github => 'peter-murach/github'
+gem 'rest-client'
 gem 'activerecord-session_store'
+gem 'octokit'

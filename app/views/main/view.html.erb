@@ -1,3 +1,10 @@
-<%= @markdown.render(Base64.decode64(@file.content)).html_safe %>
+<h5><%= link_to "Back to #{params[:topic]}", "/topic/#{params[:topic]}" %></h5>
 
-<%= link_to "Edit this Tidbit", "/edit/#{@file_name}" %>
+<h1><%= @contents.string_between_markers("#", "\n") %></h1>
+<h4>Description</h4>
+<p><%= @contents.string_between_markers("\n", "```") %></p>
+<h4>Code</h4>
+<code class="prettyprint <%= params[:topic] %>"><%= @contents.string_between_markers("```\n", "```") %></code>
+<h4>Tags</h4>
+  <p><%= @contents.string_between_markers("Tags\n", "\n").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ') %></p>
+  <%= link_to 'Edit', "/edit/#{@file.path}", :class => 'btn btn-info'%>
