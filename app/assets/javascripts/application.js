@@ -23,3 +23,5 @@
 //= require jquery.stacktable
 //= require flat-application
 //= require run_prettify
+//= require combobox
+//= require jquery.validate.min

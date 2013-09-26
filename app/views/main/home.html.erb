@@ -14,7 +14,7 @@
     <h3>Create</h3>
     <div class="row-fluid">
       <div >    
-        <%= form_tag ({:controller => "main", :action => 'save_knowledge', :method => :post}) do %>
+        <%= form_tag({:action => 'save_knowledge', :method => :post},{ :id => 'new-knowledge'}) do %>
 
           <div class="form-group">
             <%= label_tag "Title" %>
@@ -22,7 +22,16 @@
           </div>
           <div class="form-group">
             <%= label_tag "Topic" %>
-            <%= select_tag "topic", options_for_select(@topics), :prompt => "Select Topic", :class => "selectpicker", :data => {:width => "100%"} %>
+            <small> - Use the drop down to selet a Topic, or fill in your own </small>
+            <div class="input-append dropdown combobox">
+              <%= text_field_tag "topic", "Select a Topic", :class => "form-control" %><button type="button" class="btn input-icon" data-toggle="dropdown"><i class="caret"></i></button>
+              <ul class="dropdown-menu">
+                <% @topics.each do |t| %>
+                  <li><a href="#"><%= t %></a></li>
+                <% end %>
+              </ul>
+            </div>
+            <small>Topics are the folder the knowledge is stored in. IE: if Ruby is selected the knowledge will be stored in Ruby/knowleted-title.md</small>
           </div>
           <div class="form-group">
             <%= label_tag "Tags" %>
@@ -52,4 +61,15 @@
 
       </div>
     </div>
+<% end %>
+
+<% content_for :script do %>
+$("#new_knowledge").validate({
+  rules: {
+    title: {
+      required: true
+    }
+  },
+  debug: true
+});
 <% end %>

@@ -42,6 +42,14 @@ class MainController < ApplicationController
     repos.oauth_token = session[:token]
     repos.user = session[:credentials]['login']
     repos.create :name => "tome-of-knowledge"
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+     :oauth_token => session[:token],
+     :repo => 'tome-of-knowledge'
+    repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
+     :path => "README.md",
+     :message => "Created Readme",
+     :content => @contents
+
     redirect_to :action => :home
   end
   def new_knowledge
@@ -71,7 +79,7 @@ class MainController < ApplicationController
     rescue Github::Error::GithubError => e
       if e.http_status_code == 404
         repo.create session[:credentials]['login'], 'tome-of-knowledge', @file_name,
-         :path => "hello.md",
+         :path => @file_name,
          :message => "Added Knowledge: #{@file_name}",
          :content => @contents
       end
@@ -124,6 +132,19 @@ class MainController < ApplicationController
     client = Octokit::Client.new :access_token => session[:token]
     @results =  client.search_code('repo:aaronmiler/tome-of-knowledge csv')
     
+  end
+
+  def delete
+    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
+      :oauth_token => session[:token],
+      :repo => 'tome-of-knowledge'
+    repo.delete session[:credentials]['login'], 'tome-of-knowledge', @file_name,
+      :path => @file_name,
+      :sha => params['sha'],
+      :message => "Removed Knowledge: #{@file_name}"
+    render :json => {status: "Deleted", file_name: params[:file]}
+
   end
 
   private

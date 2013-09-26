@@ -13,6 +13,8 @@ Knowledge::Application.routes.draw do
       get :topic
       get :search
       post :results
+      delete :delete
+      delete :delete_topic
     end
   end 
 
@@ -20,6 +22,8 @@ Knowledge::Application.routes.draw do
   get "/topic/:topic" => "main#topic"
   get "/view/:topic/:file" => "main#view"
   get "/edit/:topic/:file" => "main#edit"
+  delete "/delete/:topic/:file" => "main#delete"
+  delete "/delete_topic/:topic" => "main#delete_topic"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
