@@ -56,12 +56,13 @@ class MainController < ApplicationController
 
   end
   def save_knowledge
-    @contents = "# #{params[:title]}\n\n#{params[:description]}\n\n```\n#{params[:contents]}\n``` \n\n#### Tags\n#{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.join(' ')}\n"
+    @topic = params[:topic].gsub(' ','_')
+    @contents = "# #{params[:title]}\n\n#{params[:description]}\n\n```\n#{params[:contents]}\n``` \n\n#### Tags\n#{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.downcase.join(' ')}\n"
     if params[:topic]
-      @file_name = "#{params[:topic]}/#{params[:title].gsub(' ','-')}.md"
+      @file_name = "#{@topic}/#{params[:title].gsub(' ','_')}.md".downcase
       @mode = "100644"
     else
-      @file_name = "#{params[:title].gsub(' ','-')}.md"
+      @file_name = "#{params[:title].gsub(' ','_')}.md".downcase
       @mode = "100644"
     end
     #git_data = Github::GitData.new
@@ -94,7 +95,7 @@ class MainController < ApplicationController
   end
 
   def view
-    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase 
     repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
      :oauth_token => session[:token],
      :repo => 'tome-of-knowledge'
@@ -103,7 +104,7 @@ class MainController < ApplicationController
   end
 
   def edit
-    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase
     repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
      :oauth_token => session[:token],
      :repo => 'tome-of-knowledge'
@@ -123,9 +124,8 @@ class MainController < ApplicationController
   end
   def results
     tags = params['query'].scan(/\((\w+)\)/)
-    tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}"}
+    tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}"}.downcase
     tags = tags.join(' ')
-    puts tags
     query = params['query'].gsub(/tag\((\w+)\)\s*/,'')
     @query = "#{tags} #{query} repo:#{session[:credentials]['login']} in:path,file"
     
@@ -135,7 +135,7 @@ class MainController < ApplicationController
   end
 
   def delete
-    @file_name = "#{params[:topic]}/#{params[:file]}.md" 
+    @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase
     repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
       :oauth_token => session[:token],
       :repo => 'tome-of-knowledge'

@@ -25,3 +25,4 @@
 //= require run_prettify
 //= require combobox
 //= require jquery.validate.min
+//= require main
