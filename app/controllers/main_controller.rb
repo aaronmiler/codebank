@@ -2,6 +2,7 @@ class MainController < ApplicationController
   require 'rest_client'
   require 'base64'
   require 'utilities'
+  require 'slim'
 
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
   before_filter :setup
@@ -22,6 +23,7 @@ class MainController < ApplicationController
   end
 
   def home
+    @wisdom = Wisdom.new
     info = Github::Repos.new :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
     if session[:repo] != info.commits.all.first.first.last
       session[:latest_sha] = info.commits.all.first.first.last
@@ -30,7 +32,7 @@ class MainController < ApplicationController
       @has_repo = @github.repos.list user: session[:credentials]['login']
       @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
     end
-    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', session[:latest_sha]
+    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', session[:latest_sha], :oauth_token => session[:token]
     @files = []
 
     #github = Github.new :oauth_token => session[:token]
@@ -56,13 +58,13 @@ class MainController < ApplicationController
 
   end
   def save_knowledge
-    @topic = params[:topic].gsub(' ','_')
-    @contents = "# #{params[:title]}\n\n#{params[:description]}\n\n```\n#{params[:contents]}\n``` \n\n#### Tags\n#{params[:tags].split(',').map{|k| "tag:#{k.gsub(' ','_')}"}.downcase.join(' ')}\n"
-    if params[:topic]
-      @file_name = "#{@topic}/#{params[:title].gsub(' ','_')}.md".downcase
+    @topic = params['wisdom']['topic'].gsub(' ','_')
+    @contents = "# #{params['wisdom']['title']}\n\n#{params['wisdom']['description']}\n\n```\n#{params['wisdom']['contents']}\n``` \n\n#### Tags\n#{params['wisdom']['tags'].split(',').map{|k| "tag:#{k.gsub(' ','_')}".downcase}.join(' ')}\n"
+    if params['wisdom']['topic']
+      @file_name = "#{@topic}/#{params['wisdom']['title'].gsub(' ','_')}.md".downcase
       @mode = "100644"
     else
-      @file_name = "#{params[:title].gsub(' ','_')}.md".downcase
+      @file_name = "#{params['wisdom']['title'].gsub(' ','_')}.md".downcase
       @mode = "100644"
     end
     #git_data = Github::GitData.new
@@ -135,7 +137,7 @@ class MainController < ApplicationController
   end
 
   def delete
-    @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase
+    @file_name = "#{params[:topic]}/#{params[:file]}.md"
     repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
       :oauth_token => session[:token],
       :repo => 'tome-of-knowledge'
@@ -152,7 +154,7 @@ class MainController < ApplicationController
   def check_login
     redirect_to :action => :index if session[:credentials].blank?
   end
-  def setup
+  def setup    
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
     @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++","PostgreSQL","SQL","Other"].sort
   end

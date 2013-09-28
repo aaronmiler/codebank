@@ -1,6 +1,6 @@
-<h5><%= link_to "Back to #{params[:topic]}", "/topic/#{params[:topic]}" %></h5>
+<h5><%= link_to "Back to #{params[:topic].gsub("_"," ").titlecase}", "/topic/#{params[:topic]}" %></h5>
 
-<h1><%= @contents.string_between_markers("#", "\n") %></h1>
+<h1><%= @contents.string_between_markers("#", "\n").titlecase %></h1>
 <h4>Description</h4>
 <p><%= @contents.string_between_markers("\n", "```") %></p>
 <h4>Code</h4>
