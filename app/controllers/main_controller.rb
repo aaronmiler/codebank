@@ -1,7 +1,6 @@
 class MainController < ApplicationController
   require 'rest_client'
   require 'base64'
-  require 'utilities'
   require 'slim'
 
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
