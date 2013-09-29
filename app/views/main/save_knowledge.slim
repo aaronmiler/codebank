@@ -1,11 +1,11 @@
 h1
-  == @contents.string_between_markers("#", "\n").titlecase
+  == @wisdom.title.gsub('_',' ').titlecase
 h4 Description
 p 
-  == @contents.string_between_markers("\n", "```")
+  == @wisdom.description
 h4 Code
 code class="prettyprint #{params['topic']}"
-  == @contents.string_between_markers("```\n", "```")
+  == @wisdom.content
 h4 Tags
-  p
-    == @contents.string_between_markers("Tags\n", "\n").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ')
+p
+  == @wisdom.tags.split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ')

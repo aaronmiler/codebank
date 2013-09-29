@@ -5,7 +5,7 @@ class MainController < ApplicationController
   require 'slim'
 
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
-  before_filter :setup
+  before_filter :setup, :except => [:index]
 
   def index
   end
@@ -24,10 +24,7 @@ class MainController < ApplicationController
 
   def home
     @wisdom = Wisdom.new
-    info = Github::Repos.new :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
-    if session[:repo] != info.commits.all.first.first.last
-      session[:latest_sha] = info.commits.all.first.first.last
-    end
+    session[:latest_sha] = @repo.commits.all.first.first.last
     unless session[:has_repo] == true
       @has_repo = @github.repos.list user: session[:credentials]['login']
       @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
@@ -40,14 +37,8 @@ class MainController < ApplicationController
   end
 
   def create_repo
-    repos = Github::Repos.new
-    repos.oauth_token = session[:token]
-    repos.user = session[:credentials]['login']
-    repos.create :name => "tome-of-knowledge"
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-     :oauth_token => session[:token],
-     :repo => 'tome-of-knowledge'
-    repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
+    @repos.create :name => "tome-of-knowledge"
+    @repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
      :path => "README.md",
      :message => "Created Readme",
      :content => @contents
@@ -58,38 +49,30 @@ class MainController < ApplicationController
 
   end
   def save_knowledge
+    @wisdom = Wisdom.new
     @topic = params['wisdom']['topic'].gsub(' ','_')
-    @contents = "# #{params['wisdom']['title']}\n\n#{params['wisdom']['description']}\n\n```\n#{params['wisdom']['contents']}\n``` \n\n#### Tags\n#{params['wisdom']['tags'].split(',').map{|k| "tag:#{k.gsub(' ','_')}".downcase}.join(' ')}\n"
-    if params['wisdom']['topic']
-      @file_name = "#{@topic}/#{params['wisdom']['title'].gsub(' ','_')}.md".downcase
-      @mode = "100644"
-    else
-      @file_name = "#{params['wisdom']['title'].gsub(' ','_')}.md".downcase
-      @mode = "100644"
-    end
-    #git_data = Github::GitData.new
+    @wisdom.set_contents(
+      params['wisdom']['topic'],
+      params['wisdom']['title'],
+      params['wisdom']['tags'],
+      params['wisdom']['content'],
+      params['wisdom']['description'])
 
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-     :oauth_token => session[:token],
-     :repo => 'tome-of-knowledge'
     begin
-      file = repo.find :path => @file_name
-      repo.update session[:credentials]['login'], 'tome-of-knowledge', @file_name,
-        :path => @file_name,
-        :message => "Updated Knowledge: #{@file_name}",
-        :content => @contents,
+      file = @repo.contents.find :path => @wisdom.filename
+      @repo.contents.update session[:credentials]['login'], 'tome-of-knowledge', @wisdom.filename,
+        :path => @wisdom.filename,
+        :message => "Updated Knowledge: #{@wisdom.filename}",
+        :content => @wisdom.markdown,
         :sha => file.sha
     rescue Github::Error::GithubError => e
       if e.http_status_code == 404
-        repo.create session[:credentials]['login'], 'tome-of-knowledge', @file_name,
-         :path => @file_name,
-         :message => "Added Knowledge: #{@file_name}",
-         :content => @contents
+        @repo.contents.create session[:credentials]['login'], 'tome-of-knowledge', @wisdom.filename,
+         :path => @wisdom.filename,
+         :message => "Added Knowledge: #{@wisdom.filename}",
+         :content => @wisdom.markdown
       end
     end
-
-    @display = repo.find :path => @file_name
-
   end
   def logout
     reset_session
@@ -98,10 +81,7 @@ class MainController < ApplicationController
 
   def view
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase 
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-     :oauth_token => session[:token],
-     :repo => 'tome-of-knowledge'
-    @file = repo.find :path => @file_name
+    @file = @repo.contents.find :path => @file_name
     @contents = Base64.decode64(@file.content)
   end
 
@@ -111,17 +91,15 @@ class MainController < ApplicationController
     @contents.fetch(session[:credentials]['login'], session[:token], @file_name)
     @contents.seperate()
   end
+
   def topic
-    @topic = params[:topic]
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-         :oauth_token => session[:token],
-         :repo => 'tome-of-knowledge'
-        @contents = repo.find :path => params[:topic]
+    @contents = @repo.contents.find :path => params[:topic]
   end
 
   def search
 
   end
+
   def results
     tags = params['query'].scan(/\((\w+)\)/)
     tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}".downcase}
@@ -136,10 +114,7 @@ class MainController < ApplicationController
 
   def delete
     @file_name = "#{params[:topic]}/#{params[:file]}.md"
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-      :oauth_token => session[:token],
-      :repo => 'tome-of-knowledge'
-    repo.delete session[:credentials]['login'], 'tome-of-knowledge', @file_name,
+    @repo.contents.delete session[:credentials]['login'], 'tome-of-knowledge', @file_name,
       :path => @file_name,
       :sha => params['sha'],
       :message => "Removed Knowledge: #{@file_name}"
@@ -153,7 +128,8 @@ class MainController < ApplicationController
     redirect_to :action => :index if session[:credentials].blank?
   end
   def setup    
-    @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET']
+    @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
+    @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
     @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++","PostgreSQL","SQL","Other"].sort
   end
 end
