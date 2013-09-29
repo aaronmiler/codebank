@@ -7,12 +7,24 @@ class String
   end
 end
 class Utility
-  def has_repo?
-    github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
-    has_repo = github.repos.list user: session[:credentials]['login']
+  def self.has_repo?(user, token)
+    github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => token
+    has_repo = github.repos.list user: user
+    repo = false
     has_repo.each do |r|
-      next if session[:has_repo] == true
-      session[:has_repo] = true if r.name == "tome-of-knowledge"      
+      next if repo == true
+      repo = true if r.name == "tome-of-knowledge"      
     end
+    return repo
+  end
+  def self.set_custom_topics(contents,topics)
+    custom_topics = []
+    contents.tree.each do |c|
+      unless topics.any?{ |s| s.casecmp(c.path)==0 }
+        next if c.type == "blob"
+        custom_topics << c.path.gsub('_',' ').titlecase
+      end
+    end
+    return custom_topics
   end
 end

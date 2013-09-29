@@ -18,10 +18,11 @@ class MainController < ApplicationController
     redirect_to address
   end
   def home
-    unless session[:has_repo] == true
-      Utility.has_repo?
+    if session[:has_repo] == true
+      session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token])
     end
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
+    session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
   end
   def create_repo
     @repos.create :name => "tome-of-knowledge"
