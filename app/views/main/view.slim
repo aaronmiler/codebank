@@ -1,14 +1,14 @@
 h5
   == link_to "Back to #{params[:topic].gsub("_"," ").titlecase}", "/topic/#{params[:topic]}"
 h1
-  == @contents.string_between_markers("#", "\n").titlecase
+  == @wisdom.title
 h4 Description
 p
-  == @contents.string_between_markers("\n", "```")
+  == @wisdom.description
 h4 Code
-code.prettyprint,#{params[:topic]}
-  == @contents.string_between_markers("```\n", "```")
+code class="prettyprint #{params['topic']}"
+  == @wisdom.content
 h4 Tags
-  p
-    == @contents.string_between_markers("Tags\n", "\n").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ')
+p 
+  == @wisdom.tags
 == link_to 'Edit', "/edit/#{@file.path}", :class => 'btn btn-info'

@@ -18,8 +18,8 @@ body
               | Search
       - if session[:credentials]
         p.pull-right.navbar-text
-          | Logged in as
-            strong #{session[:credentials]['login']}
+          | Logged in as          
+          strong #{session[:credentials]['login']}
   .container
     == yield
 

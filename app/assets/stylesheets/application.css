@@ -34,3 +34,7 @@ code {
   display:block;
   white-space: pre;
 }
+ul.dropdown-menu {
+  max-height:300px;
+  overflow-y:scroll;
+}

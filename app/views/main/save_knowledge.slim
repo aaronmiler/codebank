@@ -8,4 +8,4 @@ code class="prettyprint #{params['topic']}"
   == @wisdom.content
 h4 Tags
 p
-  == @wisdom.tags.split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ')
+  == @wisdom.tags.split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ').titlecase}.join(', ')

@@ -18,9 +18,7 @@ class MainController < ApplicationController
     redirect_to address
   end
   def home
-    if session[:has_repo] == true
-      session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token])
-    end
+    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
     session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
   end
@@ -44,7 +42,8 @@ class MainController < ApplicationController
   def view
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase 
     @file = @repo.contents.find :path => @file_name
-    @contents = Base64.decode64(@file.content)
+    @wisdom = Wisdom.new
+    @wisdom.seperate(@file.content)
   end
   def edit
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase

@@ -1,7 +1,7 @@
 .row-fluid
   .col-md-6.col-md-offset-3
     == simple_form_for @contents, :url => '/save_knowledge', :method => "post" do |f|
-      == f.input :title, :label => "Title*", :input_html => {:class => 'form-control', :value => @contents.title.titlecase}, :wrapper_html=> { class: 'form-group' }
+      == f.input :title, :label => "Title*", :input_html => {:class => 'form-control', :value => @contents.title}, :wrapper_html=> { class: 'form-group' }
       .form-group
         label Topic
         small  - Use the drop down to selet a Topic, or fill in your own 
@@ -10,12 +10,17 @@
           button.btn.input-icon type="button" data-toggle="dropdown"
             i.caret
           ul.dropdown-menu
+            - session[:custom_topics].each do |t|
+              li
+                a href="#"
+                  = t
+            li.divider
             - @topics.each do |t|
               li
                 a href="#"
                   = t
         small Topics are the folder the knowledge is stored in. IE: if Ruby is selected the knowledge will be stored in Ruby/knowleted-title.md
-      == f.input :tags, :label => "Tags", :input_html => {:class => 'form-control tagsinput', :value => @contents.tags.map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ') }, :wrapper_html=> { class: 'form-group' }
+      == f.input :tags, :label => "Tags", :input_html => {:class => 'form-control tagsinput', :value => @contents.tags }, :wrapper_html=> { class: 'form-group' }
       == f.input :description, :label => "Description", :input_html => {:class => 'form-control description', :value => @contents.description}, :wrapper_html=> { class: 'form-group' }, :as => :text
       == f.input :content, :label => "Contents", :input_html => {:class => 'form-control contents'}, :wrapper_html=> { class: 'form-group' }, :as => :text
       == f.submit "Update Knowledge", :class => "btn btn-primary"
