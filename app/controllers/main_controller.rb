@@ -50,15 +50,8 @@ class MainController < ApplicationController
   end
   def save_knowledge
     @wisdom = Wisdom.new
-    @topic = params['wisdom']['topic'].gsub(' ','_')
-    @wisdom.set_contents(
-      params['wisdom']['topic'],
-      params['wisdom']['title'],
-      params['wisdom']['tags'],
-      params['wisdom']['content'],
-      params['wisdom']['description'])
+    @wisdom.set_contents(params['wisdom'])
     @wisdom.save(session[:credentials]['login'],session[:token])
-
   end
   def logout
     reset_session

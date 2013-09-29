@@ -14,12 +14,12 @@ class Wisdom < ActiveRecord::Base
     self.content = contents.string_between_markers("```\n", "```")
     self.description = contents.string_between_markers("\n\n", "\n```")
   end
-  def set_contents(topic,title,tags,content,description)
-    self.topic = topic.gsub(' ','_')
-    self.title = title.gsub(' ','_')
-    self.tags = tags.split(',').map{|k| "tag:#{k.gsub(' ','_')}".downcase}.join(' ')
-    self.content = content
-    self.description = description
+  def set_contents(params)
+    self.topic = params['topic'].gsub(' ','_')
+    self.title = params['title'].gsub(' ','_')
+    self.tags = params['tags'].split(',').map{|k| "tag:#{k.gsub(' ','_')}".downcase}.join(' ')
+    self.content = params['content']
+    self.description = params['description']
     self.markdown = "#{self.title}\n\n#{self.description}\n\n```\n#{self.content}\n``` \n\n#### Tags\n#{self.tags}\n"
     self.filename = "#{self.topic}/#{self.title}.md".downcase
   end
