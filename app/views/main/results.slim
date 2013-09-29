@@ -1,0 +1,22 @@
+h3 Search Again
+== form_tag ({:controller => "main", :action => "results", :method => :post}) do
+  .form-group
+    == text_field_tag "query", "", :class => "form-control", :placeholder => "Search knowledge"
+    span.input-icon.fui-search
+h3 
+  | Results for: 
+  span.text-info "#{params['query']}"
+table.table.table-condensed
+  thead
+    tr
+      th Knowledge Name
+      th Actions
+  tbody
+    - @results.items.each do |r|
+      tr
+        td
+          i.glyphicon.glyphicon-file
+          == link_to r.name.gsub('-',' ').gsub('.md',''), "/view/#{r.path}"
+        td
+          == link_to '<i class="glyphicon glyphicon-edit"></i>'.html_safe, "/edit/#{r.path}"
+          == link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe, "/view/#{r.path}"

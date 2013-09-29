@@ -1,0 +1,33 @@
+h2 
+  | Topic: 
+  span
+     == params[:topic].gsub("_"," ").titlecase.to_s
+#alert
+table.table.table-condensed
+  thead
+    tr
+      th Knowledge Name
+      th Actions
+  - @contents.each do |file|
+    tr data-file="#{file.name.gsub('.md','')}"
+      td
+        i.glyphicon.glyphicon-file
+        == link_to file.name.gsub('_',' ').gsub('.md',' ').titlecase, "/view/#{file.path}"
+      td
+        == link_to '<i class="glyphicon glyphicon-edit"></i>'.html_safe, "/edit/#{file.path}", :title => "Edit Knowledge"
+        == link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe, "/delete/#{file.path}?sha=#{file.sha}", :remote => true, :method => :delete
+p.text-info
+  strong Note:
+  | If the last peice of knowledge for a given topic is deleted. It will delete the topic folder along with it.
+
+= content_for :script do
+  javascript:
+    $('body').on('ajax:success',function(status, data){
+      $("[data-file='" + data.file_name +"']").fadeOut();
+      $("#alert").append('<div class="alert alert-info" style="display:none"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><strong>Knowledge Deleted</strong> '+data.file_name+' knowledge has been deleted</div>');
+      $(".alert").slideDown(function(){
+        $(this).delay(3000).slideUp(function(){
+          $(this).remove();
+        });
+      });
+    });

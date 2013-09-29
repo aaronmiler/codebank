@@ -107,11 +107,9 @@ class MainController < ApplicationController
 
   def edit
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase
-    repo = Github::Repos::Contents.new  :user => session[:credentials]['login'],
-     :oauth_token => session[:token],
-     :repo => 'tome-of-knowledge'
-    @file = repo.find :path => @file_name
-    @contents = Base64.decode64(@file.content)
+    @contents = Wisdom.new
+    @contents.fetch(session[:credentials]['login'], session[:token], @file_name)
+    @contents.seperate()
   end
   def topic
     @topic = params[:topic]
@@ -126,13 +124,13 @@ class MainController < ApplicationController
   end
   def results
     tags = params['query'].scan(/\((\w+)\)/)
-    tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}"}.downcase
+    tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}".downcase}
     tags = tags.join(' ')
     query = params['query'].gsub(/tag\((\w+)\)\s*/,'')
-    @query = "#{tags} #{query} repo:#{session[:credentials]['login']} in:path,file"
+    @query = "#{tags} #{query} repo:#{session[:credentials]['login']}/tome-of-knowledge in:path,file"
     
     client = Octokit::Client.new :access_token => session[:token]
-    @results =  client.search_code('repo:aaronmiler/tome-of-knowledge csv')
+    @results =  client.search_code(@query)
     
   end
 

@@ -1,0 +1,27 @@
+doctype HTML
+html
+head
+  title 
+    = "#{@title} |" if @title
+    | The Tome of Knowledge
+  == stylesheet_link_tag "application", media: "all"
+  == csrf_meta_tags
+body
+  .navbar.navbar-inverse.navbar-fixed-top
+    .container
+      .navbar-header
+        a.navbar-brand href="/home"
+          | Tome of Knowledge
+        ul.nav.navbar-nav
+          li
+            a href="/search"
+              | Search
+      - if session[:credentials]
+        p.pull-right.navbar-text
+          | Logged in as
+            strong #{session[:credentials]['login']}
+  .container
+    == yield
+
+  == javascript_include_tag "application"
+  == yield :script
