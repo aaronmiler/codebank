@@ -1,11 +1,18 @@
 Knowledge::Application.routes.draw do
 
-  resources :main, :path => "/" do
-    collection do 
+  root :to => "authorization#index"
+
+  resources :authorization do
+    collection do
       get :callback
       get :login
+      delete :logout
+    end
+  end
+
+  resources :main, :path => "/" do
+    collection do 
       get :home
-      get :logout
       get :view
       get :topic
       get :search
@@ -17,7 +24,6 @@ Knowledge::Application.routes.draw do
     end
   end 
 
-  root :to => "main#index"
   get "/topic/:topic" => "main#topic"
   get "/view/:topic/:file" => "main#view"
   get "/edit/:topic/:file" => "main#edit"

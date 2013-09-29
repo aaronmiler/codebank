@@ -12,14 +12,15 @@ body
       .navbar-header
         a.navbar-brand href="/home"
           | Tome of Knowledge
+      - if session[:credentials]  
         ul.nav.navbar-nav
           li
             a href="/search"
-              | Search
-      - if session[:credentials]
+              | Search      
         p.pull-right.navbar-text
-          | Logged in as          
-          strong #{session[:credentials]['login']}
+          | Hello There       
+          strong #{session[:credentials]['login']} - 
+          == link_to " Log Out", '/authorization/logout', :method => :delete
   .container
     == yield
 

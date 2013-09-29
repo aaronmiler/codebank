@@ -1,22 +1,9 @@
 class MainController < ApplicationController
-  require 'rest_client'
-  require 'base64'
-  require 'slim'
 
-  before_filter :check_login, :except => [:index,:callback,:login,:logout]
-  before_filter :setup, :except => [:index]
+  before_filter :check_login
+  before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
 
-  def callback
-    access_token = @github.get_token params['code']
-    session[:token] = access_token.token
-    session[:credentials] = JSON.parse(RestClient.get "https://api.github.com/user?access_token=#{session[:token]}")
-    redirect_to :action => :home
-  end
-  def login    
-    address = @github.authorize_url redirect_uri: 'http://localhost:3000/callback', scope: 'public_repo'
-    redirect_to address
-  end
   def home
     session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
   end
@@ -32,10 +19,6 @@ class MainController < ApplicationController
     @wisdom = Wisdom.new
     @wisdom.set_contents(params['wisdom'])
     @wisdom.save(session[:credentials]['login'],session[:token])
-  end
-  def logout
-    reset_session
-    redirect_to :action => :index
   end
   def view
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase 
@@ -74,7 +57,7 @@ class MainController < ApplicationController
 
   private
   def check_login
-    redirect_to :action => :index if session[:credentials].blank?
+    redirect_to :root if session[:credentials].blank?
   end
   def setup    
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
