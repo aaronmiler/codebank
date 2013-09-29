@@ -23,4 +23,24 @@ class Wisdom < ActiveRecord::Base
     self.markdown = "#{self.title}\n\n#{self.description}\n\n```\n#{self.content}\n``` \n\n#### Tags\n#{self.tags}\n"
     self.filename = "#{self.topic}/#{self.title}.md".downcase
   end
+  def save(user, token)
+    github = Github::Repos::Contents.new  :user => user,
+     :oauth_token => token,
+     :repo => 'tome-of-knowledge'
+    begin
+      file = github.find :path => self.filename
+      github.update user, 'tome-of-knowledge', self.filename,
+        :path => self.filename,
+        :message => "Updated Knowledge: #{self.filename}",
+        :content => self.markdown,
+        :sha => file.sha
+    rescue Github::Error::GithubError => e
+      if e.http_status_code == 404
+        github.create user, 'tome-of-knowledge', self.filename,
+         :path => self.filename,
+         :message => "Added Knowledge: #{self.filename}",
+         :content => self.markdown
+      end
+    end
+  end
 end

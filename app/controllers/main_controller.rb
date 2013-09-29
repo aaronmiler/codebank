@@ -57,22 +57,8 @@ class MainController < ApplicationController
       params['wisdom']['tags'],
       params['wisdom']['content'],
       params['wisdom']['description'])
+    @wisdom.save(session[:credentials]['login'],session[:token])
 
-    begin
-      file = @repo.contents.find :path => @wisdom.filename
-      @repo.contents.update session[:credentials]['login'], 'tome-of-knowledge', @wisdom.filename,
-        :path => @wisdom.filename,
-        :message => "Updated Knowledge: #{@wisdom.filename}",
-        :content => @wisdom.markdown,
-        :sha => file.sha
-    rescue Github::Error::GithubError => e
-      if e.http_status_code == 404
-        @repo.contents.create session[:credentials]['login'], 'tome-of-knowledge', @wisdom.filename,
-         :path => @wisdom.filename,
-         :message => "Added Knowledge: #{@wisdom.filename}",
-         :content => @wisdom.markdown
-      end
-    end
   end
   def logout
     reset_session
