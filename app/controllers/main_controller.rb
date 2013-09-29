@@ -6,6 +6,7 @@ class MainController < ApplicationController
 
   before_filter :check_login, :except => [:index,:callback,:login,:logout]
   before_filter :setup, :except => [:index]
+  before_filter :setup_topics, :only => [:home, :edit]
 
   def callback
     access_token = @github.get_token params['code']
@@ -18,9 +19,7 @@ class MainController < ApplicationController
     redirect_to address
   end
   def home
-    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true
-    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
-    session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
+    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
   end
   def create_repo
     @repos.create :name => "tome-of-knowledge"
@@ -81,6 +80,10 @@ class MainController < ApplicationController
   def setup    
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
     @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
+  end
+  def setup_topics
+    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
     @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++","PostgreSQL","SQL","Other"].sort
+    session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
   end
 end

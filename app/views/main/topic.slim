@@ -12,10 +12,10 @@ table.table.table-condensed
     tr data-file="#{file.name.gsub('.md','')}"
       td
         i.glyphicon.glyphicon-file
-        == link_to file.name.gsub('_',' ').gsub('.md',' ').titlecase, "/view/#{file.path}"
+        == link_to file.name.gsub('_',' ').gsub('.md',' ').titlecase, "/view/#{file.path[0..-4]}"
       td
-        == link_to '<i class="glyphicon glyphicon-edit"></i>'.html_safe, "/edit/#{file.path}", :title => "Edit Knowledge"
-        == link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe, "/delete/#{file.path}?sha=#{file.sha}", :remote => true, :method => :delete
+        == link_to '<i class="glyphicon glyphicon-edit"></i>'.html_safe, "/edit/#{file.path[0..-4]}", :title => "Edit Knowledge"
+        == link_to '<i class="glyphicon glyphicon-remove"></i>'.html_safe, "/delete/#{file.path[0..-4]}?sha=#{file.sha}", :remote => true, :method => :delete
 p.text-info
   strong Note:
   | If the last peice of knowledge for a given topic is deleted. It will delete the topic folder along with it.

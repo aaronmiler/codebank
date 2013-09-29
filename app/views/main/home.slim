@@ -24,7 +24,7 @@
                 li
                   a href="#"
                     = t
-              li.divider
+              == "<li class='divider'></li>" unless session[:custom_topics].empty?
               - @topics.each do |t|
                 li
                   a href="#"

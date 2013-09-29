@@ -11,4 +11,4 @@ code class="prettyprint #{params['topic']}"
 h4 Tags
 p 
   == @wisdom.tags
-== link_to 'Edit', "/edit/#{@file.path}", :class => 'btn btn-info'
+== link_to 'Edit', "/edit/#{@file.path[0..-4]}", :class => 'btn btn-info'
