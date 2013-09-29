@@ -26,14 +26,9 @@ class MainController < ApplicationController
     @wisdom = Wisdom.new
     session[:latest_sha] = @repo.commits.all.first.first.last
     unless session[:has_repo] == true
-      @has_repo = @github.repos.list user: session[:credentials]['login']
-      @has_repo.map { |r| session[:has_repo] = true if r.name == "tome-of-knowledge" }
+      Utility.has_repo?
     end
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', session[:latest_sha], :oauth_token => session[:token]
-    @files = []
-
-    #github = Github.new :oauth_token => session[:token]
-    #github.login
   end
 
   def create_repo
