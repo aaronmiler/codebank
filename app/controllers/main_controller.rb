@@ -1,7 +1,7 @@
 class MainController < ApplicationController
 
   before_filter :check_login, :except => [:need_repo]
-  before_filter :setup, :except => [:need_repo]
+  before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
   def create_repo
     @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
