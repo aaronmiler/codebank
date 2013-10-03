@@ -10,6 +10,7 @@ class MainController < ApplicationController
       :path => "README.md",
       :message => "Created Readme",
       :content => @contents
+    session[:has_repo] = true
     redirect_to :action => :home
   end
   def save_knowledge
