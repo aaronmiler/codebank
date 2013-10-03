@@ -55,11 +55,11 @@ class MainController < ApplicationController
     redirect_to :root if session[:credentials].blank?
   end
   def setup        
+    @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
     session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
     if session[:has_repo] == false
       redirect_to '/need_repo'
     end
-    @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
     @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
   end
   def setup_topics
