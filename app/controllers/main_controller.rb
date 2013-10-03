@@ -5,7 +5,7 @@ class MainController < ApplicationController
   before_filter :setup_topics, :only => [:home, :edit]
   def create_repo
     @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
-    @repos.create :name => "tome-of-knowledge"
+    @repo.create :name => "tome-of-knowledge"
     @repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
       :path => "README.md",
       :message => "Created Readme",
