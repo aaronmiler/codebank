@@ -5,7 +5,10 @@ class AuthorizationController < ApplicationController
     access_token = @github.get_token params['code']
     session[:token] = access_token.token
     session[:credentials] = JSON.parse(RestClient.get "https://api.github.com/user?access_token=#{session[:token]}")
-    redirect_to "/home"
+    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
+    if session[:has_repo] == false
+      redirect_to '/need_repo'
+    end
   end
   def login       
     reset_session 
