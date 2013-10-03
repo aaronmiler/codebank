@@ -3,13 +3,6 @@ class MainController < ApplicationController
   before_filter :check_login
   before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
-
-  def home
-    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
-    if session[:has_repo] == false
-      redirect_to :need_repo
-    end
-  end
   def create_repo
     @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
     @repos.create :name => "tome-of-knowledge"
@@ -61,7 +54,11 @@ class MainController < ApplicationController
   def check_login
     redirect_to :root if session[:credentials].blank?
   end
-  def setup    
+  def setup        
+    session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
+    if session[:has_repo] == false
+      redirect_to :need_repo
+    end
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
     @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
   end
