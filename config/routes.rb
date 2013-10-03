@@ -16,6 +16,7 @@ Knowledge::Application.routes.draw do
       get :view
       get :topic
       get :search
+      get :need_repo
       post :create_repo
       post :save_knowledge
       post :results

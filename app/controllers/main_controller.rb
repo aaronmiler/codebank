@@ -1,13 +1,17 @@
 class MainController < ApplicationController
 
-  before_filter :check_login
-  before_filter :setup
+  before_filter :check_login, :except => [:home, :need_repo]
+  before_filter :setup, :except => [:need_repo]
   before_filter :setup_topics, :only => [:home, :edit]
 
   def home
     session[:has_repo] = Utility.has_repo?(session[:credentials]['login'],session[:token]) unless session[:has_repo] == true    
+    if session[:has_repo] == false
+      redirect_to :need_repo
+    end
   end
   def create_repo
+    @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
     @repos.create :name => "tome-of-knowledge"
     @repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
       :path => "README.md",
@@ -34,8 +38,6 @@ class MainController < ApplicationController
   end
   def topic
     @contents = @repo.contents.find :path => params[:topic]
-  end
-  def search
   end
   def results
     tags = params['query'].scan(/\((\w+)\)/)
