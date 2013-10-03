@@ -1,7 +1,7 @@
 class MainController < ApplicationController
 
-  before_filter :check_login, :except => [:home, :need_repo]
-  before_filter :setup, :except => [:need_repo]
+  before_filter :check_login
+  before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
 
   def home
