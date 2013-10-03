@@ -5,7 +5,7 @@ class MainController < ApplicationController
   before_filter :setup_topics, :only => [:home, :edit]
   def create_repo
     @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
-    @repo.create :name => "tome-of-knowledge", :user => session[:credentials]['login']
+    @repos.create :name => "tome-of-knowledge", :user => session[:credentials]['login']
     @repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
       :path => "README.md",
       :message => "Created Readme",
@@ -57,6 +57,7 @@ class MainController < ApplicationController
   def setup        
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
     @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
+    @repos = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token]
   end
   def setup_topics
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
