@@ -3,15 +3,6 @@ class MainController < ApplicationController
   before_filter :check_login, :except => [:need_repo]
   before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
-  def create_repo
-    @contents = "# The Tome of Knowledge\nThis is the Tome of Knowledge. A repo filled with markdown files of code bits and things."
-    @repos.create :name => "tome-of-knowledge", :user => session[:credentials]['login']
-    @repo.create session[:credentials]['login'], 'tome-of-knowledge', "README.md",
-      :path => "README.md",
-      :message => "Created Readme",
-      :content => @contents
-    redirect_to :action => :home
-  end
   def save_knowledge
     @wisdom = Wisdom.new
     @wisdom.set_contents(params['wisdom'])

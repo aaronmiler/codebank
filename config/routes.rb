@@ -6,6 +6,9 @@ Knowledge::Application.routes.draw do
     collection do
       get :callback
       get :login
+      get :has_repo
+      get :need_repo
+      post :create_repo
       delete :logout
     end
   end
@@ -16,8 +19,6 @@ Knowledge::Application.routes.draw do
       get :view
       get :topic
       get :search
-      get :need_repo
-      post :create_repo
       post :save_knowledge
       post :results
       delete :delete
