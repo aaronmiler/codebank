@@ -19,3 +19,8 @@ $("#new_wisdom").validate({
     return false;
   }
 });
+$('#topics').mCustomScrollbar({
+  mouseWheel:true,
+  set_width: true,
+  theme: "light-thick"
+})

@@ -9,7 +9,7 @@
           == f.input_field :topic, :class => "form-control", :placeholder => "Select Topic", :value => @contents.topic
           button.btn.input-icon type="button" data-toggle="dropdown"
             i.caret
-          ul.dropdown-menu
+          ul#topics class="dropdown-menu"
             - session[:custom_topics].each do |t|
               li
                 a href="#"

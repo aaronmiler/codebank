@@ -16,6 +16,7 @@ Knowledge::Application.routes.draw do
   resources :main, :path => "/" do
     collection do 
       get :home
+      get :about
       get :view
       get :topic
       get :search

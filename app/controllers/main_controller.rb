@@ -3,6 +3,7 @@ class MainController < ApplicationController
   before_filter :check_login, :except => [:need_repo]
   before_filter :setup
   before_filter :setup_topics, :only => [:home, :edit]
+
   def save_knowledge
     @wisdom = Wisdom.new
     @wisdom.set_contents(params['wisdom'])

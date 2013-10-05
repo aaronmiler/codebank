@@ -7,22 +7,44 @@ head
   == stylesheet_link_tag "application", media: "all"
   == csrf_meta_tags
 body
-  .navbar.navbar-inverse.navbar-fixed-top
+  #wrap
+    .navbar.navbar-inverse.navbar-fixed-top
+      .container
+        .navbar-header
+          a.navbar-brand href="/home"
+            | Tome of Knowledge
+        - if session[:credentials]  
+          ul.nav.navbar-nav
+            li
+              a href="/search"
+                | Search      
+          p.pull-right.navbar-text
+            | Hello there       
+            strong #{session[:credentials]['login']}
+            img src="#{session[:credentials]['avatar_url']}" class="avatar"
     .container
-      .navbar-header
-        a.navbar-brand href="/home"
-          | Tome of Knowledge
-      - if session[:credentials]  
-        ul.nav.navbar-nav
-          li
-            a href="/search"
-              | Search      
-        p.pull-right.navbar-text
-          | Hello There       
-          strong #{session[:credentials]['login']} - 
-          == link_to " Log Out", '/authorization/logout', :method => :delete
-  .container
-    == yield
+      == yield
+  #footer
+    .container
+      .row-fluid     
+        .col-md-8.text-left
+          ul.nav.navbar-nav
+            li
+              a href="/" class="navbar-link"
+                | Tome of Knowledge
+            li
+              a href="/about" class="navbar-link"
+                | About
+            li
+              a href="https://github.com/aaronmiler/knowledge" target="_blank" class="navbar-link"
+                | Developers
+            li
+              == link_to " Log Out", '/authorization/logout', :method => :delete, :class => 'logout'
+        .col-md-4.text-right
+          p.credits
+            | Built in Portland by 
+            a href="http://aaronmiler.com" class="navbar-link"
+              | Aaron Miler
 
   == javascript_include_tag "application"
   == yield :script

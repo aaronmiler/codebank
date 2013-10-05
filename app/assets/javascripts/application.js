@@ -25,4 +25,6 @@
 //= require run_prettify
 //= require combobox
 //= require jquery.validate.min
+//= require jquery.mCustomScrollbar.min
+//= require jquery.mousewheel.min
 //= require main

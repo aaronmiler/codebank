@@ -1,6 +1,6 @@
 .row-fluid
   .col-md-4
-    h3 Browse
+    h2 Browse
     - @contents.tree.each do |f|
       - if f.type == "tree"
         .topic
@@ -8,7 +8,7 @@
             i.glyphicon.glyphicon-folder-close
             == link_to f.path.gsub('_',' ').titlecase, "/topic/#{f.path}"
   .col-md-8
-    h3 Create
+    h2 Create
     .row-fluid
       = simple_form_for Wisdom.new, :url => '/save_knowledge', :method => 'post' do |f|
         == f.input :title, :label => "Title*", :input_html => {:class => 'form-control'}, :wrapper_html=> { class: 'form-group' }
@@ -19,7 +19,7 @@
             == f.input_field :topic, :class => "form-control", :placeholder => "Select Topic"
             button.btn.input-icon type="button" data-toggle="dropdown"
               i.caret
-            ul.dropdown-menu
+            ul#topics class="dropdown-menu"
               - session[:custom_topics].each do |t|
                 li
                   a href="#"
