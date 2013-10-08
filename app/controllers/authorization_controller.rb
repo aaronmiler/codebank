@@ -1,10 +1,8 @@
 class AuthorizationController < ApplicationController
-
   def callback
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
-    access_token = @github.get_token params['code']
-    session[:token] = access_token.token
-    session[:credentials] = JSON.parse(RestClient.get "https://api.github.com/user?access_token=#{session[:token]}")
+    session[:token] = @github.get_token(params['code']).token
+    session[:credentials] = JSON.parse(Octokit::Client.new({:access_token => session[:token]}).user.to_json)
     redirect_to :action => :has_repo
   end
   def has_repo

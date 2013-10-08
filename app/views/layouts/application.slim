@@ -21,7 +21,7 @@ body
           p.pull-right.navbar-text
             | Hello there       
             strong #{session[:credentials]['login']}
-            img src="#{session[:credentials]['avatar_url']}" class="avatar"
+            img src="http://gravatar.com/avatar/#{session[:credentials]['gravatar_id']}.png" class="avatar"
     .container
       == yield
   #footer

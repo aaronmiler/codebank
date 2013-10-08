@@ -1,6 +1,6 @@
 class Wisdom < ActiveRecord::Base 
   require "utilities"
-  attr_accessor :title, :topic, :content, :description, :tags, :file, :markdown, :filename
+  attr_accessor :title, :topic, :content, :description, :tags, :file, :markdown, :filename, :original_title
   def fetch(user, token, path)
     repo = Github::Repos::Contents.new  :user => user,
      :oauth_token => token,
@@ -21,6 +21,7 @@ class Wisdom < ActiveRecord::Base
     self.tags = params['tags'].split(',').map{|k| "tag:#{k.gsub(' ','_')}".downcase}.join(' ')
     self.content = params['content']
     self.description = params['description']
+    self.original_title = "#{self.topic}/#{params['original_title'].gsub(' ','_')}.md".downcase
     self.markdown = "# #{self.title}\n\n#{self.description}\n\n```\n#{self.content}\n``` \n\n#### Tags\n#{self.tags}\n"
     self.filename = "#{self.topic}/#{self.title}.md".downcase
   end
@@ -36,11 +37,13 @@ class Wisdom < ActiveRecord::Base
         :content => self.markdown,
         :sha => file.sha
     rescue Github::Error::GithubError => e
-      if e.http_status_code == 404
+      if e.is_a? Github::Error::ServiceError
         github.create user, 'tome-of-knowledge', self.filename,
          :path => self.filename,
          :message => "Added Knowledge: #{self.filename}",
          :content => self.markdown
+      elsif e.is_a? Github::Error::ClientError   
+        puts e.message     
       end
     end
   end
