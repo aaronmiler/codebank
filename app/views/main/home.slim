@@ -10,7 +10,7 @@
   .col-md-8
     h2 Create
     .row-fluid
-      = simple_form_for Wisdom.new, :url => '/save_knowledge', :method => 'post' do |f|
+      = simple_form_for :wisdom, :url => '/save_knowledge', :method => 'post' do |f|
         == f.input :title, :label => "Title*", :input_html => {:class => 'form-control'}, :wrapper_html=> { class: 'form-group' }
         .form-group
           label Topic

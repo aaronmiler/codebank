@@ -7,20 +7,19 @@ class MainController < ApplicationController
   #   render :json => session[:credentials]
   # end
   def save_knowledge
-    @wisdom = Wisdom.new
-    @wisdom.set_contents(params['wisdom'])
+    @wisdom = Wisdom.new(params['wisdom'])
+    @wisdom.prepare_for_save(params['wisdom'])
     @wisdom.save(session[:credentials]['login'],session[:token])
   end
   def view
     @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase 
     @file = @repo.contents.find :path => @file_name
     @wisdom = Wisdom.new
-    @wisdom.seperate(@file.content)
+    @wisdom.parse(@file.content)
   end
   def edit
-    @file_name = "#{params[:topic]}/#{params[:file]}.md".downcase
-    @contents = Wisdom.new
-    @contents.fetch(session[:credentials]['login'], session[:token], @file_name)
+    @contents = Wisdom.new()
+    @contents.fetch(session[:credentials]['login'], session[:token], "#{params[:topic]}/#{params[:file]}.md".downcase)
     @contents.seperate()
   end
   def topic
