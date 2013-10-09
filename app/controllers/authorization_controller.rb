@@ -22,7 +22,7 @@ class AuthorizationController < ApplicationController
   def login       
     reset_session 
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
-    address = @github.authorize_url redirect_uri: "http://knowledge.labs.aaronmiler.com/authorization/callback", scope: 'repo'
+    address = @github.authorize_url redirect_uri: "http://#{ENV['HOST']}/authorization/callback", scope: 'repo'
     redirect_to address
   end
   def logout

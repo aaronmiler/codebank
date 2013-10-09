@@ -1,8 +1,8 @@
-$("#new_wisdom").validate({
+$(".simple_form.wisdom").validate({
   rules: {
       "wisdom[title]": "required",
       "wisdom[topic]": "required",
-      "wisdom[contents]": "required",
+      "wisdom[contents]": "required"
   },
   submitHandler: function(form) {
     form.submit();

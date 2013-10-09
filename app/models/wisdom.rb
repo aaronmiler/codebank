@@ -28,7 +28,7 @@ class Wisdom < ActiveRecord::Base
     self.seperate
   end
   def prepare_for_save(params)
-    self.original_title = "#{self.topic}/#{params['original_title'].gsub(' ','_')}.md".downcase if params['original_title']
+    self.original_title = params['original_title'] if params['original_title']
     self.markdown = "# #{self.title}\n\n#{self.description}\n\n```\n#{self.content}\n``` \n\n#### Tags\n#{self.tags}\n"
     self.filename = "#{self.topic}/#{self.title}.md".downcase
   end
@@ -37,21 +37,40 @@ class Wisdom < ActiveRecord::Base
      :oauth_token => token,
      :repo => 'tome-of-knowledge'
     begin
-      file = github.find :path => self.filename
-      github.update user, 'tome-of-knowledge', self.filename,
-        :path => self.filename,
-        :message => "Updated Knowledge: #{self.filename}",
-        :content => self.markdown,
-        :sha => file.sha
+      if self.original_title != self.filename && self.original_title
+        file = github.find :path => self.original_title
+        self.remove(user, github, file, "Renamed #{self.original_title} to #{self.filename}")
+        self.create(user, github, "Renamed #{self.original_title} to #{self.filename}")
+      else
+        file = github.find :path => self.filename
+        self.update(user, github, file)
+      end
     rescue Github::Error::GithubError => e
       if e.is_a? Github::Error::ServiceError
-        github.create user, 'tome-of-knowledge', self.filename,
-         :path => self.filename,
-         :message => "Added Knowledge: #{self.filename}",
-         :content => self.markdown
+        self.create(user, github)
       elsif e.is_a? Github::Error::ClientError   
         puts e.message     
       end
     end
+  end
+  def create(user, github, message = "Added Knowledge: #{self.filename}")
+    github.create user, 'tome-of-knowledge', self.filename,
+     :path => self.filename,
+     :message => message,
+     :content => self.markdown
+  end
+  def remove(user, github, file, message)
+    github.delete user, 'tome-of-knowledge', self.original_title,
+      :path => self.original_title,
+      :message => message,
+      :content => self.markdown,
+      :sha => file.sha
+  end
+  def update(user, github, file)
+    github.update user, 'tome-of-knowledge', self.filename,
+      :path => self.filename,
+      :message => "Updated Knowledge: #{self.filename}",
+      :content => self.markdown,
+      :sha => file.sha
   end
 end
