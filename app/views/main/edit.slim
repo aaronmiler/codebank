@@ -7,7 +7,7 @@
         label Topic
         small  - Use the drop down to selet a Topic, or fill in your own 
         .input-append.dropdown.combobox
-          == f.input_field :topic, :class => "form-control", :placeholder => "Select Topic", :value => @contents.topic
+          == f.input_field :topic, :class => "form-control", :placeholder => "Select Topic", :value => params['topic'].gsub('_',' ').titlecase
           button.btn.input-icon type="button" data-toggle="dropdown"
             i.caret
           ul#topics class="dropdown-menu"

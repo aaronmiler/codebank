@@ -54,7 +54,7 @@ class MainController < ApplicationController
   end
   def setup_topics
     @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
-    @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C#","C++","PostgreSQL","SQL","Other"].sort
+    @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C++","PostgreSQL","SQL","Other"].sort
     session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
   end
 end
