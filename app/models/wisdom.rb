@@ -48,8 +48,6 @@ class Wisdom < ActiveRecord::Base
     rescue Github::Error::GithubError => e
       if e.is_a? Github::Error::ServiceError
         self.create(user, github)
-      elsif e.is_a? Github::Error::ClientError   
-        puts e.message     
       end
     end
   end
