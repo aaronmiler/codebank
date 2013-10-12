@@ -17,10 +17,10 @@ class Wisdom < ActiveRecord::Base
     self.file = repo.find :path => path
   end
   def seperate(contents = self.markdown || Base64.decode64(self.file.content))
-    self.title = contents.string_between_markers("# ", "\n").gsub('_',' ').titlecase
-    self.tags = contents.string_between_markers("Tags\n", "\n").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ').titlecase
-    self.content = contents.string_between_markers("```\n", "\n```")
-    self.description = contents.string_between_markers("\n\n", "\n\n```")
+    self.title = contents.string_between_markers("# ", "\n<!--- desc --->").gsub('_',' ').titlecase
+    self.tags = contents.string_between_markers("<!--- tags --->", "<!--- end_tags --->").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ').titlecase
+    self.content = contents.string_between_markers("```\n", "\n```\n#### Tags")
+    self.description = contents.string_between_markers("<!--- desc --->\n", "\n<!--- end_desc --->")
   end
   def parse(markdown)
     self.markdown = Base64.decode64(markdown)
@@ -28,7 +28,7 @@ class Wisdom < ActiveRecord::Base
   end
   def prepare_for_save(params)
     self.original_title = params['original_title'] if params['original_title']
-    self.markdown = "# #{self.title}\n\n#{self.description}\n\n```\n#{self.content}\n``` \n\n#### Tags\n#{self.tags}\n"
+    self.markdown = "# #{self.title}\n<!--- desc --->\n#{self.description}\n<!--- end_desc --->\n```\n#{self.content}\n```\n#### Tags\n<!--- tags --->\n#{self.tags}\n<!--- end_tags --->"
     self.filename = "#{self.topic.gsub('#','_sharp')}/#{self.title}.md".downcase
   end
   def save(user, token)
