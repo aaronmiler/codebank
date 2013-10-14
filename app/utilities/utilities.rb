@@ -2,6 +2,12 @@ class String
   def string_between_markers marker1, marker2
     self[/#{Regexp.escape(marker1)}(.*?)#{Regexp.escape(marker2)}/m, 1]
   end
+  def get_tags marker1, marker2
+    self[/#{Regexp.escape(marker1)}(.*?)#{Regexp.escape(marker2)}/m, 1].split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ').titlecase
+  end
+  def get_title marker1, marker2
+    self[/#{Regexp.escape(marker1)}(.*?)#{Regexp.escape(marker2)}/m, 1].gsub('_',' ').titlecase
+  end
   def safe_breaks
     safe_join(%Q{self}.split('\n'),'<br/>')
   end

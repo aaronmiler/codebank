@@ -17,8 +17,8 @@ class Wisdom < ActiveRecord::Base
     self.file = repo.find :path => path
   end
   def seperate(contents = self.markdown || Base64.decode64(self.file.content))
-    self.title = contents.string_between_markers("# ", "\n<!--- desc --->").gsub('_',' ').titlecase
-    self.tags = contents.string_between_markers("<!--- tags --->", "<!--- end_tags --->").split(' ').map{ |t| t.gsub('tag:','').gsub('-',' ')}.join(', ').titlecase
+    self.title = contents.get_title("# ", "\n<!--- desc --->")
+    self.tags = contents.get_tags("<!--- tags --->", "<!--- end_tags --->")
     self.content = contents.string_between_markers("```\n", "\n```\n#### Tags")
     self.description = contents.string_between_markers("<!--- desc --->\n", "\n<!--- end_desc --->")
   end
@@ -52,20 +52,18 @@ class Wisdom < ActiveRecord::Base
   end
   def create(user, github, message = "Added Knowledge: #{self.filename}")
     github.create user, 'tome-of-knowledge', self.filename,
-     :path => self.filename,
-     :message => message,
-     :content => self.markdown
+      :path => self.original_title,
+      :message => message,
+      :content => self.markdown
   end
   def remove(user, github, file, message)
     github.delete user, 'tome-of-knowledge', self.original_title,
       :path => self.original_title,
       :message => message,
-      :content => self.markdown,
       :sha => file.sha
   end
   def update(user, github, file)
     github.update user, 'tome-of-knowledge', self.filename,
-      :path => self.filename,
       :message => "Updated Knowledge: #{self.filename}",
       :content => self.markdown,
       :sha => file.sha
