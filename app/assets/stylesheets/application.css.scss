@@ -23,7 +23,7 @@ body {
 
 body {
   padding-top:50px;
-  background-image: image-url('background.jpg')
+  background:#2C3E50;
 }
 
 /* Wrapper for page content to push down footer */
@@ -68,6 +68,8 @@ h3 {
   background-color:#ecf0f1;
   padding-top:20px;
   padding-bottom: 20px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 .navbar .container {
   background-color: transparent;
@@ -75,7 +77,7 @@ h3 {
   padding-bottom:0px;
 }
 .navbar-inverse {
-  background-color: #2980b9;
+  background-color: #27AE60;
   .navbar-text {
    color:#ecf0f1; 
   }
@@ -139,4 +141,25 @@ code {
   border-radius:5px;
   width:auto;
   vertical-align:middle;
+}
+.topic {
+  a {
+    color:#2980B9;
+    font-weight:bold;
+    &:hover {
+      color:lighten(#2980B9, 20%)
+    }
+  }
+}
+.tagsinput {
+  border:2px solid #2980B9;
+  .tag {
+    background: #2980B9;
+    &:hover {
+      background:lighten(#2980B9, 20%)
+    }
+  }
+  .not_valid {
+    width:0px;
+  }
 }

@@ -147,6 +147,8 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     ref (1.0.5)
+    rename (1.0.2)
+      rails (>= 3.0.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec-core (2.14.5)
@@ -222,6 +224,7 @@ DEPENDENCIES
   pry-rails
   puma
   rails (= 4.0.0)
+  rename
   rest-client
   rspec-rails
   rvm-capistrano

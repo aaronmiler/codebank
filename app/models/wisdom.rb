@@ -13,7 +13,7 @@ class Wisdom < ActiveRecord::Base
   def fetch(user, token, path)
     repo = Github::Repos::Contents.new  :user => user,
      :oauth_token => token,
-     :repo => 'tome-of-knowledge'
+     :repo => ENV['REPO_NAME']
     self.file = repo.find :path => path
   end
   def seperate(contents = self.markdown || Base64.decode64(self.file.content))
@@ -34,7 +34,7 @@ class Wisdom < ActiveRecord::Base
   def save(user, token)
     github = Github::Repos::Contents.new  :user => user,
      :oauth_token => token,
-     :repo => 'tome-of-knowledge'
+     :repo => ENV['REPO_NAME']
     begin
       if self.original_title != self.filename && self.original_title
         file = github.find :path => self.original_title
@@ -51,19 +51,19 @@ class Wisdom < ActiveRecord::Base
     end
   end
   def create(user, github, message = "Added Knowledge: #{self.filename}")
-    github.create user, 'tome-of-knowledge', self.filename,
+    github.create user, ENV['REPO_NAME'], self.filename,
       :path => self.original_title,
       :message => message,
       :content => self.markdown
   end
   def remove(user, github, file, message)
-    github.delete user, 'tome-of-knowledge', self.original_title,
+    github.delete user, ENV['REPO_NAME'], self.original_title,
       :path => self.original_title,
       :message => message,
       :sha => file.sha
   end
   def update(user, github, file)
-    github.update user, 'tome-of-knowledge', self.filename,
+    github.update user, ENV['REPO_NAME'], self.filename,
       :message => "Updated Knowledge: #{self.filename}",
       :content => self.markdown,
       :sha => file.sha

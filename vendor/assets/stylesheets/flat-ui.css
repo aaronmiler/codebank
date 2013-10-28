@@ -536,12 +536,12 @@ address {
   top: 0;
 }
 .btn.btn-primary {
-  background-color: #1abc9c;
+  background-color: #3498DB;
 }
 .btn.btn-primary:hover,
 .btn.btn-primary:focus,
 .btn-group:focus .btn.btn-primary.dropdown-toggle {
-  background-color: #48c9b0;
+  background-color: lighten(#3498DB, 20%);
 }
 .btn.btn-primary:active,
 .btn-group.open .btn.btn-primary.dropdown-toggle,

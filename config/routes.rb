@@ -1,4 +1,4 @@
-Knowledge::Application.routes.draw do
+CodeBank::Application.routes.draw do
 
   root :to => "authorization#index"
 

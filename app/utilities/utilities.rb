@@ -19,7 +19,7 @@ class Utility
     repo = false
     has_repo.each do |r|
       next if repo == true
-      repo = true if r.name == "tome-of-knowledge"      
+      repo = true if r.name == "codebank-account"      
     end
     return repo
   end

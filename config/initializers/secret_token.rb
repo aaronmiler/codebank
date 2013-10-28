@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Knowledge::Application.config.secret_key_base = '2146e23bb686b750f22acd005be869b82c614e6e33f7bcaa7fabf1fbbc83e5af89faead9f6099e08e03b7f774a7a6f9fe20ae2d9d651ea61499d8dd30720f8bb'
+CodeBank::Application.config.secret_key_base = '2146e23bb686b750f22acd005be869b82c614e6e33f7bcaa7fabf1fbbc83e5af89faead9f6099e08e03b7f774a7a6f9fe20ae2d9d651ea61499d8dd30720f8bb'

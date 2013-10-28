@@ -30,13 +30,13 @@ class MainController < ApplicationController
     tags.map{|t| "tag:#{t.to_s.gsub(' ','_')}".downcase}
     tags = tags.join(' ')
     query = params['query'].gsub(/tag\((\w+)\)\s*/,'')
-    @query = "#{tags} #{query} repo:#{session[:credentials]['login']}/tome-of-knowledge in:path,file"    
+    @query = "#{tags} #{query} repo:#{session[:credentials]['login']}/codebank-account in:path,file"    
     client = Octokit::Client.new :access_token => session[:token]
     @results =  client.search_code(@query)    
   end
   def delete
     @file_name = "#{params[:topic]}/#{params[:file]}.md"
-    @repo.contents.delete session[:credentials]['login'], 'tome-of-knowledge', @file_name,
+    @repo.contents.delete session[:credentials]['login'], ENV['REPO_NAME'], @file_name,
       :path => @file_name,
       :sha => params['sha'],
       :message => "Removed Knowledge: #{@file_name}"
@@ -49,11 +49,11 @@ class MainController < ApplicationController
   end
   def setup        
     @github = Github.new client_id: ENV['GITHUB_ID'], client_secret: ENV['GITHUB_SECRET'], :oauth_token => session[:token]
-    @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => 'tome-of-knowledge'
+    @repo = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token], :repo => ENV['REPO_NAME']
     @repos = Github::Repos.new  :user => session[:credentials]['login'], :oauth_token => session[:token]
   end
   def setup_topics
-    @contents = @github.git_data.trees.get session[:credentials]['login'], 'tome-of-knowledge', @repo.commits.all.first.first.last, :oauth_token => session[:token]
+    @contents = @github.git_data.trees.get session[:credentials]['login'], ENV['REPO_NAME'], @repo.commits.all.first.first.last, :oauth_token => session[:token]
     @topics = ["Ruby","Java","JavaScript","HTML","CSS","Python","Perl","C","C++","PostgreSQL","SQL","Other"].sort
     session[:custom_topics] = Utility.set_custom_topics(@contents, @topics)
   end

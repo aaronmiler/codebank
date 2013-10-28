@@ -3,4 +3,4 @@
 
 require File.expand_path('../config/application', __FILE__)
 
-Knowledge::Application.load_tasks
+CodeBank::Application.load_tasks

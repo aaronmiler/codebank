@@ -16,7 +16,7 @@ class AuthorizationController < ApplicationController
   def create_repo
     repos = Github::Repos.new :oauth_token => session[:token],
       :user => session[:credentials]['login']
-    repos.create :name => "tome-of-knowledge", :auto_init => true
+    repos.create :name => ENV['REPO_NAME'], :auto_init => true
     redirect_to '/home'
   end
   def login       
