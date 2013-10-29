@@ -39,7 +39,7 @@ class MainController < ApplicationController
     @repo.contents.delete session[:credentials]['login'], ENV['REPO_NAME'], @file_name,
       :path => @file_name,
       :sha => params['sha'],
-      :message => "Removed Knowledge: #{@file_name}"
+      :message => "Removed Code: #{@file_name}"
     render :json => {status: "Deleted", file_name: params[:file]}
   end
 

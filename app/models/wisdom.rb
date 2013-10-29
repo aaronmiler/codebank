@@ -50,7 +50,7 @@ class Wisdom < ActiveRecord::Base
       end
     end
   end
-  def create(user, github, message = "Added Knowledge: #{self.filename}")
+  def create(user, github, message = "Deposited: #{self.filename}")
     github.create user, ENV['REPO_NAME'], self.filename,
       :path => self.original_title,
       :message => message,
@@ -64,7 +64,7 @@ class Wisdom < ActiveRecord::Base
   end
   def update(user, github, file)
     github.update user, ENV['REPO_NAME'], self.filename,
-      :message => "Updated Knowledge: #{self.filename}",
+      :message => "Updated: #{self.filename}",
       :content => self.markdown,
       :sha => file.sha
   end

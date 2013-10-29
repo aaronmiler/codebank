@@ -29,8 +29,8 @@
                 li
                   a href="#"
                     = t
-          small Topics are the folder the knowledge is stored in. IE: if Ruby is selected the knowledge will be stored in Ruby/knowleted-title.md
+          small Topics are the folder the knowledge is stored in. IE: if Ruby is selected the knowledge will be stored in Ruby/code-title.md
         == f.input :tags, :label => "Tags", required: false, :input_html => {:class => 'form-control tagsinput'}, :wrapper_html=> { class: 'form-group' }
         == f.input :description, :label => "Description", required: false, :input_html => {:class => 'form-control description'}, :wrapper_html=> { class: 'form-group' }, :as => :text
-        == f.input :content, :label => "Contents", required: false, :input_html => {:class => 'form-control contents'}, :wrapper_html=> { class: 'form-group' }, :as => :text
-        == f.button :submit, :class => "btn btn-primary"
+        == f.input :content, :label => "Code", required: false, :input_html => {:class => 'form-control contents'}, :wrapper_html=> { class: 'form-group' }, :as => :text
+        == f.button :submit,"Deposit Code", :class => "btn btn-primary"
