@@ -45,7 +45,7 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'pry-rails'
-gem 'puma'
+gem 'unicorn'
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.2.1'
 end
