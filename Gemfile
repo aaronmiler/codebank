@@ -53,6 +53,7 @@ end
 group :development do
   gem 'awesome_print'
   gem 'capistrano-unicorn', :require => false
+  gem 'capistrano-rbenv', :require => false
 end
 
 group :test do
@@ -60,7 +61,6 @@ group :test do
   gem 'factory_girl_rails'
 end
 
-gem 'rvm-capistrano'
 
 gem 'figaro'
 gem 'github_api', :github => 'peter-murach/github'
