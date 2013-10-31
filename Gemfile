@@ -45,13 +45,14 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'pry-rails'
-gem 'unicorn'
+gem 'unicorn-rails'
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.2.1'
 end
 
 group :development do
   gem 'awesome_print'
+  gem 'capistrano-unicorn', :require => false
 end
 
 group :test do
@@ -68,4 +69,3 @@ gem 'activerecord-session_store'
 gem 'octokit'
 gem 'slim'
 gem 'simple_form'
-gem 'rename'
