@@ -36,7 +36,7 @@ end
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use unicorn as the app server
-# gem 'unicorn'
+gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
@@ -45,7 +45,7 @@ end
 # gem 'debugger', group: [:development, :test]
 
 gem 'pry-rails'
-gem 'unicorn-rails'
+# gem 'puma'
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.2.1'
 end
