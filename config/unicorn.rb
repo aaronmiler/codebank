@@ -27,7 +27,7 @@ working_directory APP_PATH
 stderr_path APP_PATH + "../shared/log/unicorn.stderr.log"
 stdout_path APP_PATH + "../shared/log/unicorn.stderr.log"
 
-pid APP_PATH + "../shared/pid/unicorn.pid"
+pid APP_PATH + "../shared/pids/unicorn.pid"
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
 listen "/path/to/.unicorn.sock", :backlog => 64
