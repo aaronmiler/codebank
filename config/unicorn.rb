@@ -21,13 +21,12 @@ worker_processes 4
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
-APP_PATH = "/var/apps/codebank/current"
-working_directory APP_PATH
+working_directory "/var/apps/codebank/current"
 
-stderr_path APP_PATH + "../shared/log/unicorn.stderr.log"
-stdout_path APP_PATH + "../shared/log/unicorn.stderr.log"
+stderr_path "/var/apps/codebank/shared/log/unicorn.stderr.log"
+stdout_path "/var/apps/codebank/shared/log/unicorn.stderr.log"
 
-pid APP_PATH + "../shared/pids/unicorn.pid"
+pid "/var/apps/codebank/shared/pids/unicorn.pid"
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
 listen "/path/to/.unicorn.sock", :backlog => 64
