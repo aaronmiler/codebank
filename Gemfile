@@ -36,7 +36,7 @@ end
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
 # Use unicorn as the app server
-gem 'unicorn'
+# gem 'unicorn'
 
 # Use Capistrano for deployment
 # gem 'capistrano', group: :development
@@ -44,16 +44,15 @@ gem 'unicorn'
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'pry-rails'
 # gem 'puma'
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.2.1'
 end
 
 group :development do
-  gem 'awesome_print'
-  gem 'capistrano-unicorn', :require => false
-  gem 'capistrano-rbenv', :require => false
+  gem 'pry-rails', :require => false
+  gem 'awesome_print', :require => false
+  gem 'rvm-capistrano', :require => false
 end
 
 group :test do
