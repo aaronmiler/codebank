@@ -4,5 +4,5 @@
     p Want to search your CodeBank? Simply put your query here to search existing code.<br/>To add tag search to a query input tags like so: tag(my tag)
     = form_tag ({:controller => "main", :action => "results", :method => :post}) do
       .form-group
-        == text_field_tag "query", "", :class => "form-control", :placeholder => "Search knowledge"
+        == text_field_tag "query", "", :class => "form-control", :placeholder => "Search code"
         span.input-icon.fui-search
