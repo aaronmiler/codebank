@@ -36,3 +36,4 @@ rerun.txt
 pickle-email-*.html
 .project
 deploy.rb
+new_relic.yml
